@@ -1,0 +1,12 @@
+# Claude Code: a client agents run on (kind `client`). `pointman add claude` installs npm's package on every
+# node that has none, in the node's own folder; a copy a person installed themselves stays theirs.
+
+[extension]
+id = "claude"
+name = "Claude Code"
+version = "0.1.1"
+publisher = "aurelio"
+summary = "Anthropic's coding agent: agents spawned as claude run on it."
+
+[client]
+npm = "@anthropic-ai/claude-code"
