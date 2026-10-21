@@ -1,8 +1,8 @@
 # claude
 
 A Pointman extension that puts Claude Code, Anthropic's coding agent, on your machines, so agents spawned as
-`claude` run on it. It's a client: nothing runs beside it. The extension is only the name of npm's package,
-`@anthropic-ai/claude-code`, and each node installs it.
+`claude` run on it. It's a client: nothing runs beside it.
+Its manifest says how a node installs it, signs it in and talks to it (`[client]`, v2).
 
 ```
 pointman add claude
@@ -10,10 +10,10 @@ pointman add claude
 
 ## How it works
 
-- **Installing:** `pointman add claude` installs npm's newest Claude Code on every node of the workspace that
-  hasn't got it, and on a node that joins later. `--nodes <machine>` adds it there only. It goes in the node's
-  own folder, never npm's global one, so it needs no root and never clashes with a Homebrew install. The
-  machine needs npm (Node.js).
+- **Installing:** `pointman add claude` installs Anthropic's native build of Claude Code on every node of the
+  workspace that hasn't got it, and on a node that joins later. `--nodes <machine>` adds it there only. The build
+  is checked against the sha-256 in Anthropic's manifest, then set up by its own `claude install`, which links
+  `~/.local/bin/claude` and keeps it up to date. Nothing else is needed on the machine.
 - **Yours stays yours:** a Claude Code you installed yourself (Claude's own installer, Homebrew, npm, nix)
   counts as installed and comes first. `pointman add` leaves it as it is, `pointman upgrade` doesn't touch it,
   and `pointman remove` never takes it away.
@@ -25,11 +25,11 @@ pointman add claude
 
 ## Upgrade, remove, versions
 
-- `pointman upgrade` moves the copies `pointman add` installed to npm's newest.
+- `pointman upgrade` moves the copies `pointman add` installed to their newest.
 - `pointman remove claude` takes the node's own copy away, and nothing else.
 - `pointman list` shows Claude Code on each machine, `added` (by `pointman add`) or `yours`, and
   `pointman health` its version, the newest there is, and whether it's signed in.
-- It takes no version: a node always installs npm's newest. This extension's own version only marks changes
+- It takes no version: a node always installs the newest. This extension's own version only marks changes
   to its manifest.
 
 ## Commands and settings
@@ -40,11 +40,28 @@ None. Claude Code keeps its own settings, as it does outside Pointman.
 
 ```toml
 [client]
-npm = "@anthropic-ai/claude-code"
+npm = "@anthropic-ai/claude-code"          # where its newest version is said
+binaries = ["claude"]
+protocol = "claude-stream"                  # stream-json in and out
+api_keys = ["ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN"]   # never passed to a run: runs are on its own login
+
+[client.install]
+from = "native"                             # its own installer (claude install latest)
+
+[client.sign_in]
+how = "claude auth login"
+check = ["auth", "status", "--json"]
+
+[client.mcp]
+via = "flag"
+args = ["--mcp-config", "{value}"]
 ```
 
-That's all a client is: npm's package. A client has no `[run]`, behaviour, files, links, rules or settings.
-Each node installs from its own table of packages, which has to agree with this one.
+`[client]` v2 (Pointman release 20) says what a node needs: its programs, how its runs talk (`protocol`), how a
+node installs it, how it signs in, how MCP servers reach it, and its vendor's API keys, which never reach a run.
+Claude Code is built into the node as code, and this manifest has to say what that code does: a test in Pointman
+checks they agree. A client still stands alone: no `[run]`, behaviour, files, links, rules or settings. The
+format is in Pointman's docs/dev/extensions.md.
 
 ## Releasing
 

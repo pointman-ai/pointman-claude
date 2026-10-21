@@ -1,12 +1,28 @@
-# Claude Code: a client agents run on (kind `client`). `pointman add claude` installs npm's package on every
-# node that has none, in the node's own folder; a copy a person installed themselves stays theirs.
+# Claude Code: a client agents run on (kind `client`; James, thread 10399 [10869]). `pm add claude` installs it on
+# every node that has none, with its own installer; one a person installed stays theirs. [client] v2 (AGC-17)
+# describes the node's built-in Claude Code (node/src/clientspec), which must agree with it.
+# Format: docs/dev/extensions.md.
 
 [extension]
 id = "claude"
 name = "Claude Code"
-version = "0.1.1"
+version = "0.2.0"
 publisher = "aurelio"
 summary = "Anthropic's coding agent: agents spawned as claude run on it."
 
 [client]
-npm = "@anthropic-ai/claude-code"
+npm = "@anthropic-ai/claude-code"          # where its newest version is said
+binaries = ["claude"]
+protocol = "claude-stream"                  # stream-json in and out
+api_keys = ["ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN"]   # never passed to a run: runs are on its own login
+
+[client.install]
+from = "native"                             # its own installer (claude install latest)
+
+[client.sign_in]
+how = "claude auth login"
+check = ["auth", "status", "--json"]
+
+[client.mcp]
+via = "flag"
+args = ["--mcp-config", "{value}"]
