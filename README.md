@@ -43,6 +43,7 @@ None. Claude Code keeps its own settings, as it does outside Pointman.
 npm = "@anthropic-ai/claude-code"          # where its newest version is said
 binaries = ["claude"]
 protocol = "claude-stream"                  # stream-json in and out
+live = true                                 # its agents can join a voice call
 api_keys = ["ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN"]   # never passed to a run: runs are on its own login
 
 [client.install]
@@ -59,6 +60,8 @@ args = ["--mcp-config", "{value}"]
 
 `[client]` v2 (Pointman release 20) says what a node needs: its programs, how its runs talk (`protocol`), how a
 node installs it, how it signs in, how MCP servers reach it, and its vendor's API keys, which never reach a run.
+`live = true` says its agents can join a voice call: a session takes words mid-turn, streams its text and stops
+when asked.
 Claude Code is built into the node as code, and this manifest has to say what that code does: a test in Pointman
 checks they agree. A client still stands alone: no `[run]`, behaviour, files, links, rules or settings. The
 format is in Pointman's docs/dev/extensions.md.
