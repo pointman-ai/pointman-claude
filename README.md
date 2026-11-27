@@ -1,8 +1,8 @@
 # claude
 
 A Pointman extension that puts Claude Code, Anthropic's coding agent, on your machines, so agents spawned as
-`claude` run on it. It's a client: nothing runs beside it.
-Its manifest says how a node installs it, signs it in and talks to it (`[client]`, v2).
+`claude` run on it. It's a harness: nothing runs beside it.
+Its manifest says how a node installs it, signs it in and talks to it (`[harness]`, v2).
 
 ```
 pointman add claude
@@ -19,7 +19,7 @@ pointman add claude
   and `pointman remove` never takes it away.
 - **Signing in:** sign Claude Code in once on each machine (`claude auth login`). `pointman health` and the
   apps' Machines page say when one is signed out.
-- **Spawning:** a node runs agents on any client it has, so with Claude Code there, `/spawn <name> claude
+- **Spawning:** a node runs agents on any harness it has, so with Claude Code there, `/spawn <name> claude
   [machine] [~/folder]` in a thread starts an agent on it. Spawning on a machine without it is refused at once,
   with the fix: `pointman add claude --nodes <machine>`.
 
@@ -39,31 +39,31 @@ None. Claude Code keeps its own settings, as it does outside Pointman.
 ## The manifest
 
 ```toml
-[client]
+[harness]
 npm = "@anthropic-ai/claude-code"          # where its newest version is said
 binaries = ["claude"]
 protocol = "claude-stream"                  # stream-json in and out
 live = true                                 # its agents can join a voice call
 api_keys = ["ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN"]   # never passed to a run: runs are on its own login
 
-[client.install]
+[harness.install]
 from = "native"                             # its own installer (claude install latest)
 
-[client.sign_in]
+[harness.sign_in]
 how = "claude auth login"
 check = ["auth", "status", "--json"]
 
-[client.mcp]
+[harness.mcp]
 via = "flag"
 args = ["--mcp-config", "{value}"]
 ```
 
-`[client]` v2 (Pointman release 20) says what a node needs: its programs, how its runs talk (`protocol`), how a
+`[harness]` v2 (Pointman release 20) says what a node needs: its programs, how its runs talk (`protocol`), how a
 node installs it, how it signs in, how MCP servers reach it, and its vendor's API keys, which never reach a run.
 `live = true` says its agents can join a voice call: a session takes words mid-turn, streams its text and stops
 when asked.
 Claude Code is built into the node as code, and this manifest has to say what that code does: a test in Pointman
-checks they agree. A client still stands alone: no `[run]`, behaviour, files, links, rules or settings. The
+checks they agree. A harness still stands alone: no `[run]`, behaviour, files, links, rules or settings. The
 format is in Pointman's docs/dev/extensions.md.
 
 ## Releasing
