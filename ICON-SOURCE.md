@@ -1,6 +1,6 @@
 # Icon source
 
-The vendor mark is used to identify its coding client in Pointman.
+The vendor mark is used to identify its coding harness in Pointman.
 
 Source: https://claude.ai/images/claude_app_icon.png
 
